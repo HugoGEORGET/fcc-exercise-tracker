@@ -48,9 +48,33 @@ app.use((err, req, res, next) => {
 
 const userSchema = mongoose.Schema({
   name: String
-})
+});
 
-app.post("/api/exercise/new-user", (req, res) => {});
+const User = mongoose.model("User", userSchema);
+
+const createUser = (username, done) => {
+  let newUser = new User({
+    name: username
+  });
+
+  newUser.save((err, data) => {
+    if (err) return console.log(err);
+    done(null, data);
+  });
+};
+
+const exerciseSchema = mongoose.Schema({
+  userId: { type: String, required: true },
+  description: { type: String, required: true },
+  duration: { type: Number, required: true },
+  date: Date
+});
+
+const Exercise = mongoose.model("Exercise", exerciseSchema);
+
+app.post("/api/exercise/new-user", (req, res) => {
+  createUser(req.body.username);
+});
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log("Your app is listening on port " + listener.address().port);
