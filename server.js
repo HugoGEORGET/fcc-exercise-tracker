@@ -23,19 +23,17 @@ app.get("/", (req, res) => {
 // Hugo Georget
 
 const userSchema = mongoose.Schema({
-  name: String
+  name: String,
+  exercises: [
+    {
+      description: { type: String, required: true },
+      duration: { type: Number, required: true },
+      date: { type: Date, default: Date.now }
+    }
+  ]
 });
 
 const User = mongoose.model("User", userSchema);
-
-const exerciseSchema = mongoose.Schema({
-  userId: { type: String, required: true },
-  description: { type: String, required: true },
-  duration: { type: Number, required: true },
-  date: Date
-});
-
-const Exercise = mongoose.model("Exercise", exerciseSchema);
 
 app.post("/api/exercise/new-user", (req, res) => {
   let newUser = new User({
@@ -49,10 +47,12 @@ app.post("/api/exercise/new-user", (req, res) => {
 });
 
 app.get("/api/exercise/users", (req, res) => {
-  User.find({}, (err, users) => {
-    if (err) return console.log(err);
-    res.json({ users });
-  });
+  User.find({})
+    .select("_id name")
+    .exec((err, users) => {
+      if (err) return console.log(err);
+      res.json({ users });
+    });
 });
 
 // Not found middleware
