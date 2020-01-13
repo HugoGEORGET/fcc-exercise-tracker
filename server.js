@@ -20,6 +20,41 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
+// Hugo Georget
+
+const userSchema = mongoose.Schema({
+  name: String
+});
+
+const User = mongoose.model("User", userSchema);
+
+const exerciseSchema = mongoose.Schema({
+  userId: { type: String, required: true },
+  description: { type: String, required: true },
+  duration: { type: Number, required: true },
+  date: Date
+});
+
+const Exercise = mongoose.model("Exercise", exerciseSchema);
+
+app.post("/api/exercise/new-user", (req, res) => {
+  let newUser = new User({
+    name: req.body.username
+  });
+
+  newUser.save((err, user) => {
+    if (err) return console.log(err);
+    res.json({ _id: user.id, name: req.body.username });
+  });
+});
+
+app.get("/api/exercise/users", (req, res) => {
+  User.find({}, (err, users) => {
+    if (err) return console.log(err);
+    res.json({ users });
+  });
+});
+
 // Not found middleware
 app.use((req, res, next) => {
   return next({ status: 404, message: "not found" });
@@ -44,36 +79,6 @@ app.use((err, req, res, next) => {
     .status(errCode)
     .type("txt")
     .send(errMessage);
-});
-
-const userSchema = mongoose.Schema({
-  name: String
-});
-
-const User = mongoose.model("User", userSchema);
-
-const createUser = (username, done) => {
-  let newUser = new User({
-    name: username
-  });
-
-  newUser.save((err, data) => {
-    if (err) return console.log(err);
-    done(null, data);
-  });
-};
-
-const exerciseSchema = mongoose.Schema({
-  userId: { type: String, required: true },
-  description: { type: String, required: true },
-  duration: { type: Number, required: true },
-  date: Date
-});
-
-const Exercise = mongoose.model("Exercise", exerciseSchema);
-
-app.post("/api/exercise/new-user", (req, res) => {
-  createUser(req.body.username);
 });
 
 const listener = app.listen(process.env.PORT || 3000, () => {
