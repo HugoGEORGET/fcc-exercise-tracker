@@ -55,6 +55,22 @@ app.get("/api/exercise/users", (req, res) => {
     });
 });
 
+app.post("/api/exercise/add", (req, res) => {
+  let date = req.body.date ? req.body.date : Date.now;
+
+  User.findById(req.body.userId, (err, user) => {
+    if (err) return console.log(err);
+    user.exercises.push({
+      description: req.body.description,
+      duration: req.body.duration,
+      date: date
+    });
+    user.save((err, editedUser) => {
+      res.json(editedUser);
+    });
+  });
+});
+
 // Not found middleware
 app.use((req, res, next) => {
   return next({ status: 404, message: "not found" });
