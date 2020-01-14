@@ -56,7 +56,8 @@ app.get("/api/exercise/users", (req, res) => {
 });
 
 app.post("/api/exercise/add", (req, res) => {
-  let date = req.body.date ? req.body.date : Date.now;
+  let date = req.body.date ? req.body.date : Date.now();
+  console.log(date);
 
   User.findById(req.body.userId, (err, user) => {
     if (err) return console.log(err);
@@ -70,6 +71,10 @@ app.post("/api/exercise/add", (req, res) => {
     });
   });
 });
+
+app.get("/api/exercise/log?{userId}[&from][&to][&limit]", (req, res) => {
+  
+})
 
 // Not found middleware
 app.use((req, res, next) => {
