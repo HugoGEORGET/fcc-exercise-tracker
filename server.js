@@ -73,7 +73,13 @@ app.post("/api/exercise/add", (req, res) => {
 });
 
 app.get("/api/exercise/log?{userId}[&from][&to][&limit]", (req, res) => {
-  
+  if (!req.query.userId) {
+    res.json({error: "No userId defined"})
+  } else {
+    User.findById(req.query.userId, (err, user) => {
+      
+    })
+  }
 })
 
 // Not found middleware
