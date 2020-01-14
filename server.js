@@ -75,15 +75,42 @@ app.post("/api/exercise/add", (req, res) => {
 app.get("/api/exercise/log", (req, res) => {
   if (!req.query.userId) {
     res.json({ error: "No userId defined" });
-  } else {
-    User.findById(req.query.userId)
-      .lean()
-      .exec((err, user) => {
-        if (err) return console.log(err);
-        user.exercise_count = user.exercises.length;
-        res.json(user);
-      });
+  } else if ((req.query.from && req.query.to) || req.query.limit) {
+    // add additionnal parameter to query
+    if (req.query.from && req.query.to && req.query.limit) {
+      // all parameters
+      User.findById(req.query.userId)
+        .lean()
+        .find({
+          exercises: { date: { $gte: req.query.from, $lte: req.query.to } }
+        })
+        .limit(req.query.limit)
+        .exec((err, user) => {
+          if (err) return console.log(err);
+          user.exercise_count = user.exercises.length;
+          res.json(user);
+        });
+    } else if (req.query.limit) {
+      User.findById(req.query.userId)
+        .lean()
+        .find({
+          exercises: { date: { $gte: req.query.from, $lte: req.query.to } }
+        })
+        .limit(req.query.limit)
+        .exec((err, user) => {
+          if (err) return console.log(err);
+          user.exercise_count = user.exercises.length;
+          res.json(user);
+        });
+    }
   }
+  User.findById(req.query.userId)
+    .lean()
+    .exec((err, user) => {
+      if (err) return console.log(err);
+      user.exercise_count = user.exercises.length;
+      res.json(user);
+    });
 });
 
 // Not found middleware
