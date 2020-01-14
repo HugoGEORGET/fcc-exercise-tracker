@@ -72,15 +72,19 @@ app.post("/api/exercise/add", (req, res) => {
   });
 });
 
-app.get("/api/exercise/log?{userId}[&from][&to][&limit]", (req, res) => {
+app.get("/api/exercise/log", (req, res) => {
   if (!req.query.userId) {
-    res.json({error: "No userId defined"})
+    res.json({ error: "No userId defined" });
   } else {
-    User.findById(req.query.userId, (err, user) => {
-      
-    })
+    User.findById(req.query.userId).exec((err, user) => {
+      if (err) return console.log(err);
+      user.exercise_count = user.exercises.length;
+      console.log("exercises count : " + user.exercise_count);
+      console.log("user : " + user);
+      res.json(user);
+    });
   }
-})
+});
 
 // Not found middleware
 app.use((req, res, next) => {
