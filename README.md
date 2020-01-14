@@ -1,5 +1,8 @@
 # Exercise Tracker REST API
 
+**UNTESTED**
+The FreeCodeCamp's tests were not working when this was developed ! 
+
 #### A microservice project, part of Free Code Camp's curriculum
 
 ### User Stories
